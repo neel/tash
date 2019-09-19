@@ -15,16 +15,10 @@ int main(){
     tokai::shell school("school"); // shell("school", "localhost", 8529, "root", "root")
     if(school.exists() == boost::beast::http::status::not_found){
         school.create();
-        std::cout << boost::format("created database %1%") % school.database() << std::endl;
-    }else{
-        std::cout << boost::format("database %1% exists") % school.database() << std::endl;
     }
     tokai::vertex students(school, "students");
     if(students.exists() == boost::beast::http::status::not_found){
         students.create();
-        std::cout << boost::format("created vertex %1%") % students.name() << std::endl;
-    }else{
-        std::cout << boost::format("vertex %1% exists") % students.name() << std::endl;
     }
     nlohmann::json document = {
         {"name", "Hijibijbij"},
@@ -35,7 +29,7 @@ int main(){
     if(status == boost::beast::http::status::accepted){
         std::cout << boost::format("document created with key %1%") % document["_key"] << std::endl;
     }else{
-        std::cout << "Failed to create document" << std::endl;
+        std::cout << "Failed to create document with error " << status << std::endl;
     }
     nlohmann::json hijibijbij = students.by_key(document["_key"].get<std::string>());
     std::cout << "retrieved document " << std::endl;
