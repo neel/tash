@@ -172,3 +172,30 @@ LET date = DATE_NOW()
             uncles_name: "tokai"
         } IN users
 ```
+
+#### replace
+
+```cpp
+replace(nlohmann::json{
+    {"_key", 1234}
+}).with({
+    {"name", "tokai"},
+    {"uncles_name", "tokai"}
+}).in("students")
+```
+```aql
+REPLACE {"_key":1234} 
+    WITH {
+        "name":"tokai",
+        "uncles_name":"tokai"
+    } IN students
+```
+
+#### remove
+
+```cpp
+erase(assign("_key", "1")).in("students")
+```
+```aql
+REMOVE {_key: 1} IN students
+```
