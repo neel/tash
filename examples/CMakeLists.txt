@@ -7,3 +7,6 @@ SET(CMAKE_CXX_FLAGS "-ftemplate-backtrace-limit=0 ${CMAKE_CXX_FLAGS}")
 
 ADD_EXECUTABLE(tokai-example-01 tokai-example-01.cpp)
 TARGET_LINK_LIBRARIES(tokai-example-01 tokai)
+
+ADD_EXECUTABLE(tokai-example-02 tokai-example-02.cpp)
+TARGET_LINK_LIBRARIES(tokai-example-02 tokai)
