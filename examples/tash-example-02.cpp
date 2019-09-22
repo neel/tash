@@ -60,15 +60,15 @@ int main(){
     
     std::cout << erase(assign("_key", "1")).in("students") << std::endl;
     
-//     std::cout << upsert(
-//         assign("name", std::string("superuser"))
-//     ).insert(
-//          assign("name", std::string("superuser"))
-//         .assign("logins", "1")
-//         .assign("dateCreated", "DATE_NOW()")
-//     ).update(
-//         assign("logins", "OLD.logins + 1")   
-//     ).in("students") << std::endl;
+    std::cout << upsert(nlohmann::json{
+        {"name", "tokai"}
+    }).insert({
+        {"name", "tokai"},
+        {"fathers_name", "tokai"}
+    }).update({
+        {"name", "tokai"},
+        {"fathers_name", "tokai"}
+    }).in("students") << std::endl;
     
     return 0;
 }

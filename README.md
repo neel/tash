@@ -1,7 +1,7 @@
 # Tash (ট্যাশ) 
 Tash (ট্যাশ)  is a C++ library for ArangoDB Database which includes APIs for HTTP based document access and a query builder for AQL (Arango Query Language)
 
-![tashgoru](tash-goru.png "Logo Title Text 1")
+![tashgoru](tash-goru.png "ট্যাঁশগরু সুকুমার রায়")
 
 ---
 
@@ -101,7 +101,7 @@ FOR u IN {"fathers_name":"tash","name":"tash"}
     INSERT u INTO students
 ```
 
-#### generate rows
+### generate rows
 
 * in `nlohmann::json` string values are always quoted
 * `tash::assign` generates non-nested key value pairs (non-nested json)
@@ -125,7 +125,7 @@ FOR i IN 1..10
     } INTO users
 ```
 
-#### update
+### update
 
 ```cpp
 update(nlohmann::json{
@@ -138,7 +138,7 @@ update(nlohmann::json{
 UPDATE {"_key":1234} WITH {"uncles_name":"tash"} IN students
 ```
 
-#### let
+### let
 
 ```cpp
   (let("date") = "DATE_NOW()")
@@ -175,7 +175,7 @@ LET date = DATE_NOW()
         } IN users
 ```
 
-#### replace
+### replace
 
 ```cpp
 replace(nlohmann::json{
@@ -193,11 +193,57 @@ REPLACE {"_key":1234}
     } IN students
 ```
 
-#### remove
+### remove
 
 ```cpp
 erase(assign("_key", "1")).in("students")
 ```
 ```aql
 REMOVE {_key: 1} IN students
+```
+
+### upsert
+
+```cpp
+upsert(nlohmann::json{
+    {"name", "tokai"}
+}).insert({
+    {"name", "tokai"},
+    {"fathers_name", "tokai"}
+}).update({
+    {"name", "tokai"},
+    {"fathers_name", "tokai"}
+}).in("students")
+```
+```aql
+UPSERT {"name":"tokai"} 
+    INSERT {"fathers_name":"tokai","name":"tokai"} 
+    UPDATE {"fathers_name":"tokai","name":"tokai"}
+    IN students
+```
+
+## create graph
+
+```cpp
+auto graph = ddl::graph_definition("corpus")
+    .add_edge_definition(ddl::edge_definition("StructuralE").add_from("Word").add_to("Word").add_to("Sentence"))
+    .add_edge_definition(ddl::edge_definition("WNeighbourhoodE").add_from("Word").add_to("Word"))
+    .add_edge_definition(ddl::edge_definition("InstanceE").add_from("Word").add_to("Vocabulary"));
+query("_api/gharial", graph.json().dump());
+```
+
+## create aql function
+
+```cpp
+std::string function_str = R"(
+    function(p1, p2){
+        // function body
+    }
+)";
+auto fnc = nlohmann::json({
+    {"name", "NS::FNAME"},
+    {"code", function_str},
+    {"isDeterministic", true}
+});
+query("_api/aqlfunction", fnc.dump());
 ```
