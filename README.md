@@ -1,6 +1,8 @@
 # Tash (ট্যাশ) 
 Tash (ট্যাশ)  is a C++ library for ArangoDB Database which includes APIs for HTTP based document access and a query builder for AQL (Arango Query Language)
 
+![tashgoru](tash-goru.png "Logo Title Text 1")
+
 ---
 
 ## Example 1
