@@ -3,6 +3,10 @@ Tash (ট্যাশ) is a small Open Source (FreeBSD License) C++ library for 
 
 ![tashgoru](tash-goru.png "ট্যাঁশগরু সুকুমার রায়")
 
+* [Building](#building)
+* [Basic Example](#basic-example)
+* [Query builder](#aql-arango-query-language-builder)
+
 ---
 
 ## Building
