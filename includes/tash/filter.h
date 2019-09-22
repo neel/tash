@@ -26,7 +26,7 @@
 /**
  * @todo write docs
  */
-namespace tokai{
+namespace tash{
     template <typename T>
     struct quote_policy{
         static constexpr bool quoted = false;
@@ -95,7 +95,7 @@ namespace tokai{
         junction::base_ptr _right;
         
         compound_junction(const std::string& op, junction::base_ptr left, junction::base_ptr right);
-        tokai::junction::base_ptr clone() const override;
+        tash::junction::base_ptr clone() const override;
         std::string to_string() const override;
     };
     
@@ -104,7 +104,7 @@ namespace tokai{
         clause              _right;
         
         mixed_junction(const std::string& op, junction::base_ptr left, const clause& right);
-        tokai::junction::base_ptr clone() const override;
+        tash::junction::base_ptr clone() const override;
         std::string to_string() const override;
     };
     
@@ -113,7 +113,7 @@ namespace tokai{
         clause _right;
         
         leaf_junction(const std::string& op, const clause& left, const clause& right);
-        tokai::junction::base_ptr clone() const override;
+        tash::junction::base_ptr clone() const override;
         std::string to_string() const override;
     };
     

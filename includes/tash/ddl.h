@@ -21,7 +21,7 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 
-namespace tokai{
+namespace tash{
 namespace ddl{
     
     struct edge_definition{

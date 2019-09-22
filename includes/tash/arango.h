@@ -17,11 +17,11 @@
 #ifndef ARANGOPP_ARANGO_H
 #define ARANGOPP_ARANGO_H
 
-#include "tokai/connection.h"
-#include "tokai/query.h"
-#include "tokai/filter.h"
-#include "tokai/filter.h"
-#include "tokai/compositor.h"
-#include "tokai/ddl.h"
+#include "tash/connection.h"
+#include "tash/query.h"
+#include "tash/filter.h"
+#include "tash/filter.h"
+#include "tash/compositor.h"
+#include "tash/ddl.h"
 
 #endif // ARANGOPP_ARANGO_H

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "tokai/connection.h"
-#include "tokai/query.h"
+#include "tash/connection.h"
+#include "tash/query.h"
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/beast/core/detail/base64.hpp>
@@ -25,37 +25,37 @@
 
 namespace http = boost::beast::http;
 
-tokai::connection::connection(const std::string& db, std::string host, unsigned int port, std::string user, std::string pass): _host(host), _port(port), _user(user), _pass(pass), _db(db), _resolver(_io){
+tash::connection::connection(const std::string& db, std::string host, unsigned int port, std::string user, std::string pass): _host(host), _port(port), _user(user), _pass(pass), _db(db), _resolver(_io){
     
 }
 
-tokai::http_request_type tokai::connection::url(boost::beast::http::verb method, std::string path) const{
+tash::http_request_type tash::connection::url(boost::beast::http::verb method, std::string path) const{
     boost::trim_left_if(path, boost::is_any_of("/ "));
-    tokai::http_request_type request(method, "/"+path, 10);
+    tash::http_request_type request(method, "/"+path, 10);
     std::string credentials = (boost::format("%1%:%2%") % _user % _pass).str();
     request.set(boost::beast::http::field::authorization, "Basic " + boost::beast::detail::base64_encode(credentials));
     return request;
 }
 
-tokai::http_request_type tokai::connection::db_url(boost::beast::http::verb method, std::string path) const{
+tash::http_request_type tash::connection::db_url(boost::beast::http::verb method, std::string path) const{
     boost::trim_left_if(path, boost::is_any_of("/ "));
     return url(method, (boost::format("/_db/%1%/%2%") % _db % path).str());
 }
 
-tokai::http_response_type tokai::connection::query(const tokai::http_request_type& request){
+tash::http_response_type tash::connection::query(const tash::http_request_type& request){
     boost::mutex::scoped_lock lock(_mutex);
     auto const results = _resolver.resolve(_host, boost::lexical_cast<std::string>(_port));
     boost::asio::ip::tcp::socket socket(_io);
     boost::asio::connect(socket, results.begin(), results.end());
     boost::beast::http::write(socket, request);
     boost::beast::flat_buffer buffer;
-    tokai::http_response_type res;
+    tash::http_response_type res;
     boost::beast::http::read(socket, buffer, res);
     return res;
 }
 
-tokai::http_response_type tokai::connection::query(std::string path, boost::beast::http::verb method){
-    tokai::http_request_type request;
+tash::http_response_type tash::connection::query(std::string path, boost::beast::http::verb method){
+    tash::http_request_type request;
     if(boost::algorithm::starts_with(path, "/")){
         request = url(method, path);
     }else{
@@ -64,8 +64,8 @@ tokai::http_response_type tokai::connection::query(std::string path, boost::beas
     return query(request);
 }
 
-tokai::http_response_type tokai::connection::query(std::string path, const std::string& content, std::string type, boost::beast::http::verb method){
-    tokai::http_request_type request;
+tash::http_response_type tash::connection::query(std::string path, const std::string& content, std::string type, boost::beast::http::verb method){
+    tash::http_request_type request;
     if(boost::algorithm::starts_with(path, "/")){
         request = url(method, path);
     }else{
@@ -77,7 +77,7 @@ tokai::http_response_type tokai::connection::query(std::string path, const std::
     return query(request);
 }
 
-tokai::cursor tokai::connection::aql(const std::string& q, int count, int batch){
+tash::cursor tash::connection::aql(const std::string& q, int count, int batch){
     nlohmann::json document{
         {"query", q}
     };
@@ -87,42 +87,42 @@ tokai::cursor tokai::connection::aql(const std::string& q, int count, int batch)
     if(batch != 0){
         document["batchSize"] = batch;
     }
-    tokai::http_response_type response = query("_api/cursor", document.dump(), "application/json", boost::beast::http::verb::post);
+    tash::http_response_type response = query("_api/cursor", document.dump(), "application/json", boost::beast::http::verb::post);
     if(response.result() == http::status::ok || response.result() == http::status::accepted || response.result() == http::status::created){}
     else{
         std::cout << "AQL Failed: " << q << std::endl;
         std::cout << "result: " << response.result() << std::endl;
         std::cout << response << std::endl;
     }
-    tokai::cursor cursor(*this);
+    tash::cursor cursor(*this);
     cursor.attach(response);
     return cursor;
 }
 
-boost::beast::http::status tokai::connection::exists() {
+boost::beast::http::status tash::connection::exists() {
     return query("_api/version").result();
 }
 
-tokai::cursor::cursor(tokai::connection& conn, const std::string& id): _conn(conn), _id(id){}
-tokai::cursor::cursor(tokai::connection& conn): _conn(conn), _id(std::string()){}
-tokai::cursor::cursor(const tokai::cursor& other): _conn(other._conn), _id(other._id), _has_more(other._has_more), _error(other._error), _count(other._count), _code(other._code), _results(other._results){}
-tokai::cursor::~cursor(){
+tash::cursor::cursor(tash::connection& conn, const std::string& id): _conn(conn), _id(id){}
+tash::cursor::cursor(tash::connection& conn): _conn(conn), _id(std::string()){}
+tash::cursor::cursor(const tash::cursor& other): _conn(other._conn), _id(other._id), _has_more(other._has_more), _error(other._error), _count(other._count), _code(other._code), _results(other._results){}
+tash::cursor::~cursor(){
      boost::mutex::scoped_lock lock(_mutex);
 }
 
-nlohmann::json tokai::cursor::results() const{
+nlohmann::json tash::cursor::results() const{
     boost::mutex::scoped_lock lock(_mutex);
     return _results;
 }
 
 
-void tokai::cursor::fetch(){
+void tash::cursor::fetch(){
     // https://github.com/boostorg/beast/issues/819
-    tokai::http_response_type response = _conn.query("_api/cursor/"+_id, "", "application/json", boost::beast::http::verb::put);
+    tash::http_response_type response = _conn.query("_api/cursor/"+_id, "", "application/json", boost::beast::http::verb::put);
     attach(response);
 }
 
-void tokai::cursor::attach(const tokai::http_response_type response){
+void tash::cursor::attach(const tash::http_response_type response){
     boost::mutex::scoped_lock lock(_mutex);
     nlohmann::json json = nlohmann::json::parse(boost::beast::buffers_to_string(response.body().data()));
     _has_more = json.value("hasMore", false);
@@ -135,62 +135,62 @@ void tokai::cursor::attach(const tokai::http_response_type response){
     }
 }
 
-tokai::shell::shell(const std::string& db, std::string host, unsigned int port, std::string user, std::string pass): connection(db, host, port, user, pass){}
-tokai::shell& tokai::shell::operator>>(nlohmann::json& res){
+tash::shell::shell(const std::string& db, std::string host, unsigned int port, std::string user, std::string pass): connection(db, host, port, user, pass){}
+tash::shell& tash::shell::operator>>(nlohmann::json& res){
     res = results();
     return *this;
 }
 
 
-tokai::collection::collection(tokai::connection& conn, const std::string& name, type t): _conn(conn), _name(name), _type(t){}
+tash::collection::collection(tash::connection& conn, const std::string& name, type t): _conn(conn), _name(name), _type(t){}
 
-boost::beast::http::status tokai::connection::create(){
+boost::beast::http::status tash::connection::create(){
     nlohmann::json document = {
         {"name", _db}
     };
-    tokai::http_response_type response = query("/_api/database", document.dump());
+    tash::http_response_type response = query("/_api/database", document.dump());
     return response.result();
 }
 
-boost::beast::http::status tokai::collection::exists(){
-    tokai::http_response_type response = _conn.query("_api/collection/"+_name);
+boost::beast::http::status tash::collection::exists(){
+    tash::http_response_type response = _conn.query("_api/collection/"+_name);
     return response.result();
 }
 
-boost::beast::http::status tokai::collection::create(){
+boost::beast::http::status tash::collection::create(){
     nlohmann::json document = {
         {"name", _name},
         {"type", _type}
     };
-    tokai::http_response_type response = _conn.query("_api/collection", document.dump());
+    tash::http_response_type response = _conn.query("_api/collection", document.dump());
     return response.result();
 }
 
-boost::beast::http::status tokai::collection::add(const nlohmann::json& document){
-    tokai::http_response_type response = _conn.query("_api/document/"+_name, document.dump());
+boost::beast::http::status tash::collection::add(const nlohmann::json& document){
+    tash::http_response_type response = _conn.query("_api/document/"+_name, document.dump());
     return response.result();
 }
 
-boost::beast::http::status tokai::collection::add(nlohmann::json& document){
-    tokai::http_response_type response = _conn.query("_api/document/"+_name, document.dump());
+boost::beast::http::status tash::collection::add(nlohmann::json& document){
+    tash::http_response_type response = _conn.query("_api/document/"+_name, document.dump());
     nlohmann::json json = nlohmann::json::parse(boost::beast::buffers_to_string(response.body().data()));
     document = json;
     return response.result();
 }
 
-tokai::http_response_type tokai::collection::update(const std::string key, const nlohmann::json& document){
+tash::http_response_type tash::collection::update(const std::string key, const nlohmann::json& document){
     return _conn.query((boost::format("_api/document/%1%/%2%") % _name % key).str(), document.dump(), "application/json", boost::beast::http::verb::patch);
 }
 
-tokai::http_response_type tokai::collection::replace(const std::string key, const nlohmann::json& document){
+tash::http_response_type tash::collection::replace(const std::string key, const nlohmann::json& document){
     return _conn.query((boost::format("_api/document/%1%/%2%") % _name % key).str(), document.dump(), "application/json", boost::beast::http::verb::put);
 }
 
-tokai::http_response_type tokai::collection::read(const std::string key){
+tash::http_response_type tash::collection::read(const std::string key){
     return _conn.query((boost::format("_api/document/%1%/%2%") % _name % key).str());
 }
 
-tokai::http_response_type tokai::collection::read(int limit, int skip){
+tash::http_response_type tash::collection::read(int limit, int skip){
     nlohmann::json document{
         {"collection", _name}
     };
@@ -203,26 +203,26 @@ tokai::http_response_type tokai::collection::read(int limit, int skip){
     return _conn.query("_api/simple/all", document.dump(), "application/json", boost::beast::http::verb::put);
 }
 
-boost::beast::http::status tokai::edge::add(const std::string& from, const std::string& to, nlohmann::json& document){
+boost::beast::http::status tash::edge::add(const std::string& from, const std::string& to, nlohmann::json& document){
     document["_from"] = from;
     document["_to"]   = to;
-    return tokai::collection::add(document);
+    return tash::collection::add(document);
 }
 
-boost::beast::http::status tokai::edge::add(const std::string& from, const std::string& to, const nlohmann::json& document){
+boost::beast::http::status tash::edge::add(const std::string& from, const std::string& to, const nlohmann::json& document){
     nlohmann::json request(document);
     request["_from"] = from;
     request["_to"]   = to;
-    return tokai::collection::add(request);
+    return tash::collection::add(request);
 }
 
-boost::beast::http::status tokai::edge::add(const std::string& from, const std::string& to){
+boost::beast::http::status tash::edge::add(const std::string& from, const std::string& to){
     return add(from, to, nlohmann::json());
 }
 
 
-nlohmann::json tokai::collection::by_id(const std::string& id){
-    tokai::http_response_type response = _conn.query("_api/document/"+id);
+nlohmann::json tash::collection::by_id(const std::string& id){
+    tash::http_response_type response = _conn.query("_api/document/"+id);
     if(response.result() == boost::beast::http::status::ok){
         nlohmann::json json = nlohmann::json::parse(boost::beast::buffers_to_string(response.body().data()));
         return json;
@@ -230,6 +230,6 @@ nlohmann::json tokai::collection::by_id(const std::string& id){
     return nlohmann::json(nullptr);
 }
 
-nlohmann::json tokai::collection::by_key(const std::string& key){
+nlohmann::json tash::collection::by_key(const std::string& key){
     return by_id((boost::format("%1%/%2%") % _name % key).str());
 }

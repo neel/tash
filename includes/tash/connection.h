@@ -28,7 +28,7 @@
 #include <boost/thread/mutex.hpp>
 #include "filter.h"
 
-namespace tokai{
+namespace tash{
     typedef boost::beast::http::request<boost::beast::http::string_body>    http_request_type;
     typedef boost::beast::http::response<boost::beast::http::dynamic_body>   http_response_type;
     

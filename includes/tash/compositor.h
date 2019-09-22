@@ -20,7 +20,7 @@
 #include <string>
 #include <iostream>
 
-namespace tokai{
+namespace tash{
     
 struct null_composition{
     std::string to_string() const {return "";}

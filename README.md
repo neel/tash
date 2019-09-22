@@ -1,5 +1,5 @@
-# Tokai(তকাই) 
-Tokai(তকাই)  is a C++ library for ArangoDB Database which includes APIs for HTTP based document access and a query builder for AQL (Arango Query Language)
+# Tash (ট্যাশ) 
+Tash (ট্যাশ)  is a C++ library for ArangoDB Database which includes APIs for HTTP based document access and a query builder for AQL (Arango Query Language)
 
 ---
 
@@ -7,16 +7,16 @@ Tokai(তকাই)  is a C++ library for ArangoDB Database which includes APIs 
 
 ```cpp
 #include <iostream>
-#include <tokai/arango.h>
+#include <tash/arango.h>
 #include <boost/format.hpp>
 #include <boost/beast/http/status.hpp>
 
 int main(){
-    tokai::shell school("school"); // shell("school", "localhost", 8529, "root", "root")
+    tash::shell school("school"); // shell("school", "localhost", 8529, "root", "root")
     if(school.exists() == boost::beast::http::status::not_found){
         school.create();
     }
-    tokai::vertex students(school, "students");
+    tash::vertex students(school, "students");
     if(students.exists() == boost::beast::http::status::not_found){
         students.create();
     }
@@ -44,7 +44,7 @@ int main(){
 ### Retrieve / Filter / Sort
 
 ```cpp
-tokai::shell shell("school"); // shell("school", "localhost", 8529, "root", "root")
+tash::shell shell("school"); // shell("school", "localhost", 8529, "root", "root")
 shell <<  select("s").in("students")  // use select instead of FOR because for is a C++ keyword
         / filter((clause("s.name") == name) && (clause("s.fathers_name") == name)) // using std::string puts quotes around the value
         / sort().asc("s._key")
@@ -78,40 +78,40 @@ FOR s IN students
 
 ```cpp
 insert(nlohmann::json{
-    {"name", "tokai"},
-    {"fathers_name", "tokai"}
+    {"name", "tash"},
+    {"fathers_name", "tash"}
 }).in("students");
 ```
 ```aql
-INSERT {"fathers_name":"tokai","name":"tokai"} INTO students
+INSERT {"fathers_name":"tash","name":"tash"} INTO students
 ```
 
 #### insert multiple rows
 
 ```cpp
 select("u").in({
-    {"name", "tokai"},
-    {"fathers_name", "tokai"}
+    {"name", "tash"},
+    {"fathers_name", "tash"}
 }) / insert("u").in("students")
 ```
 ```aql
-FOR u IN {"fathers_name":"tokai","name":"tokai"}
+FOR u IN {"fathers_name":"tash","name":"tash"}
     INSERT u INTO students
 ```
 
 #### generate rows
 
 * in `nlohmann::json` string values are always quoted
-* `tokai::assign` generates non-nested key value pairs (non-nested json)
+* `tash::assign` generates non-nested key value pairs (non-nested json)
 * C style strings are unquoted, `std::string` is quoted
 
 
 ```cpp
   select("i").in(1, 10) 
 / insert(
-    assign("name", "CONCAT('tokai', i)")
+    assign("name", "CONCAT('tash', i)")
    .assign("gender", "(i % 2 == 0 ? 'f' : 'm')")
-   .assign("fathers_name", std::string("tokai"))
+   .assign("fathers_name", std::string("tash"))
   ).in("users")
 ```
 ```aql
@@ -119,7 +119,7 @@ FOR i IN 1..10
     INSERT {
         name: CONCAT('test', i), 
         gender: (i % 2 == 0 ? 'f' : 'm'),
-        fathers_name: "tokai"
+        fathers_name: "tash"
     } INTO users
 ```
 
@@ -129,11 +129,11 @@ FOR i IN 1..10
 update(nlohmann::json{
     {"_key", 1234}
 }).with({
-    {"uncles_name", "tokai"}
+    {"uncles_name", "tash"}
 }).in("students")
 ```
 ```aql
-UPDATE {"_key":1234} WITH {"uncles_name":"tokai"} IN students
+UPDATE {"_key":1234} WITH {"uncles_name":"tash"} IN students
 ```
 
 #### let
@@ -152,7 +152,7 @@ UPDATE {"_key":1234} WITH {"uncles_name":"tokai"} IN students
 / update("user").with(
      assign("isImportantUser", 1)
     .assign("dateBecameImportant", "date")
-    .assign("uncles_name", std::string("tokai"))
+    .assign("uncles_name", std::string("tash"))
 ).in("users")
 ```
 ```aql
@@ -169,7 +169,7 @@ LET date = DATE_NOW()
         UPDATE user WITH {
             isImportantUser: 1, 
             dateBecameImportant: date,
-            uncles_name: "tokai"
+            uncles_name: "tash"
         } IN users
 ```
 
@@ -179,15 +179,15 @@ LET date = DATE_NOW()
 replace(nlohmann::json{
     {"_key", 1234}
 }).with({
-    {"name", "tokai"},
-    {"uncles_name", "tokai"}
+    {"name", "tash"},
+    {"uncles_name", "tash"}
 }).in("students")
 ```
 ```aql
 REPLACE {"_key":1234} 
     WITH {
-        "name":"tokai",
-        "uncles_name":"tokai"
+        "name":"tash",
+        "uncles_name":"tash"
     } IN students
 ```
 

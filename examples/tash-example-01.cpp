@@ -1,17 +1,17 @@
 #include <iostream>
-#include <tokai/arango.h>
+#include <tash/arango.h>
 #include <boost/format.hpp>
 #include <boost/beast/http/status.hpp>
 
 int main(){
-    tokai::shell school("school"); // shell("school", "localhost", 8529, "root", "root")
+    tash::shell school("school"); // shell("school", "localhost", 8529, "root", "root")
     if(school.exists() == boost::beast::http::status::not_found){
         school.create();
         std::cout << boost::format("created database %1%") % school.database() << std::endl;
     }else{
         std::cout << boost::format("database %1% exists") % school.database() << std::endl;
     }
-    tokai::vertex students(school, "students");
+    tash::vertex students(school, "students");
     if(students.exists() == boost::beast::http::status::not_found){
         students.create();
         std::cout << boost::format("created vertex %1%") % students.name() << std::endl;

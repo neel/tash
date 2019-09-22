@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-#include "tokai/ddl.h"
+#include "tash/ddl.h"
 
-tokai::ddl::edge_definition::edge_definition(const std::string& name): _collection(name){}
+tash::ddl::edge_definition::edge_definition(const std::string& name): _collection(name){}
 
-tokai::ddl::edge_definition & tokai::ddl::edge_definition::add_from(const std::string& name){
+tash::ddl::edge_definition & tash::ddl::edge_definition::add_from(const std::string& name){
     _from.push_back(name);
     return *this;
 }
-tokai::ddl::edge_definition & tokai::ddl::edge_definition::add_to(const std::string& name){
+tash::ddl::edge_definition & tash::ddl::edge_definition::add_to(const std::string& name){
     _to.push_back(name);
     return *this;
 }
 
 
-nlohmann::json tokai::ddl::edge_definition::json() const{
+nlohmann::json tash::ddl::edge_definition::json() const{
     nlohmann::json from = nlohmann::json::array();
     for(const std::string& v: _from){
         from.push_back(v);
@@ -43,13 +43,13 @@ nlohmann::json tokai::ddl::edge_definition::json() const{
         {"to", to}
     });
 }
-tokai::ddl::graph_definition::graph_definition(const std::string& name): _name(name){}
+tash::ddl::graph_definition::graph_definition(const std::string& name): _name(name){}
 
-tokai::ddl::graph_definition& tokai::ddl::graph_definition::add_edge_definition(const tokai::ddl::edge_definition& def){
+tash::ddl::graph_definition& tash::ddl::graph_definition::add_edge_definition(const tash::ddl::edge_definition& def){
     _edge_definitions.push_back(def);
     return *this;
 }
-nlohmann::json tokai::ddl::graph_definition::json() const{
+nlohmann::json tash::ddl::graph_definition::json() const{
     nlohmann::json edge_defs = nlohmann::json::array();
     for(auto def: _edge_definitions){
         edge_defs.push_back(def.json());
