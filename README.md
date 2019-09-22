@@ -1,11 +1,29 @@
 # Tash (ট্যাশ) 
-Tash (ট্যাশ) is an Open Source (FreeBSD License) C++ library for ArangoDB Database which includes APIs for HTTP based document access and a query builder for AQL (Arango Query Language)
-
+Tash (ট্যাশ) is a small Open Source (FreeBSD License) C++ library for ArangoDB Database which includes APIs for HTTP based document access and a query builder for AQL (Arango Query Language). 
 ![tashgoru](tash-goru.png "ট্যাঁশগরু সুকুমার রায়")
 
 ---
 
-## Example 1
+## Building
+
+### prerequisites
+
+* C++ compiler
+* CMake
+* boost library
+* nlohmann::json [OPTIONAL] (tash ships with a single file version of nlohmann::json)
+
+### compiling
+
+```bash
+git clone https://gitlab.com/neel.basu/tash.git
+mkdir build
+cd build
+cmake ..
+make
+```
+
+## Basic Example
 
 ```cpp
 #include <iostream>
