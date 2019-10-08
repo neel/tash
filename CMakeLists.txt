@@ -34,6 +34,7 @@ else()
   endif()
 endif()
 
+include_directories(dependencies/base-n/include)
 
 SET(TASH_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}/includes

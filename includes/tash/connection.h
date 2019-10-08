@@ -71,7 +71,7 @@ namespace tash{
         nlohmann::json results() const;
       private:
         cursor(connection& conn);
-        void attach(const http_response_type response);
+        void attach(const http_response_type& response);
       public:
         ~cursor();
     };

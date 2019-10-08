@@ -458,28 +458,28 @@ namespace tash{
     }
     
     template <typename... T>
-    auto select(T... elems){
+    auto select(const T&... elems){
         return primary<for_action>(elems...);
     }
     template <typename... T>
-    auto update(T... elems){
+    auto update(const T&... elems){
         return primary<update_action>(elems...);
     }
     template <typename... T>
-    auto insert(T... elems){
+    auto insert(const T&... elems){
         return primary<insert_action>(elems...);
     }
     template <typename... T>
-    auto replace(T... elems){
+    auto replace(const T&... elems){
         return primary<replace_action>(elems...);
     }
     template <typename... T>
-    auto collect(T... elems){
+    auto collect(const T&... elems){
         return primary<collect_action>(elems...);
     }
     secondary_proxy<domain_collection, collect_action> collect();
     template <typename... T>
-    auto erase(T... elems){
+    auto erase(const T&... elems){
         return primary<erase_action>(elems...);
     }
     

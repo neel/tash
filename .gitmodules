@@ -1,0 +1,3 @@
+[submodule "dependencies/base-n"]
+	path = dependencies/base-n
+	url = https://github.com/azawadzki/base-n.git

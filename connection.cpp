@@ -29,10 +29,10 @@
 #include "tash/query.h"
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/beast/core/detail/base64.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/asio/buffer.hpp>
+#include <basen.hpp>
 
 namespace http = boost::beast::http;
 
@@ -41,10 +41,12 @@ tash::connection::connection(const std::string& db, std::string host, unsigned i
 }
 
 tash::http_request_type tash::connection::url(boost::beast::http::verb method, std::string path) const{
+    std::string b64_encoded_credentials;
     boost::trim_left_if(path, boost::is_any_of("/ "));
     tash::http_request_type request(method, "/"+path, 10);
     std::string credentials = (boost::format("%1%:%2%") % _user % _pass).str();
-    request.set(boost::beast::http::field::authorization, "Basic " + boost::beast::detail::base64_encode(credentials));
+    bn::encode_b64(credentials.begin(), credentials.end(), back_inserter(b64_encoded_credentials));
+    request.set(boost::beast::http::field::authorization, "Basic " + b64_encoded_credentials);
     return request;
 }
 
@@ -99,7 +101,7 @@ tash::cursor tash::connection::aql(const std::string& q, int count, int batch){
         document["batchSize"] = batch;
     }
     tash::http_response_type response = query("_api/cursor", document.dump(), "application/json", boost::beast::http::verb::post);
-    if(response.result() == http::status::ok || response.result() == http::status::accepted || response.result() == http::status::created){}
+    if(response.result() == http::status::ok || response.result() == http::status::accepted || response.result() == http::status::created){/* No Operation */}
     else{
         std::cout << "AQL Failed: " << q << std::endl;
         std::cout << "result: " << response.result() << std::endl;
@@ -133,7 +135,7 @@ void tash::cursor::fetch(){
     attach(response);
 }
 
-void tash::cursor::attach(const tash::http_response_type response){
+void tash::cursor::attach(const tash::http_response_type& response){
     boost::mutex::scoped_lock lock(_mutex);
     nlohmann::json json = nlohmann::json::parse(boost::beast::buffers_to_string(response.body().data()));
     _has_more = json.value("hasMore", false);
