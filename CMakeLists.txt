@@ -34,6 +34,21 @@ else()
   endif()
 endif()
 
+
+# This macro updates a repository submodule
+MACRO(update_submodule submodule_dir)
+  EXECUTE_PROCESS(COMMAND git submodule init
+                  WORKING_DIRECTORY ${submodule_dir}
+                  RESULT_VARIABLE submodule_init_exit_code)
+  EXECUTE_PROCESS(COMMAND git submodule update --init --recursive --force
+                  WORKING_DIRECTORY ${submodule_dir}
+                  RESULT_VARIABLE submodule_update_exit_code)
+  IF(NOT(submodule_init_exit_code EQUAL 0 AND submodule_update_exit_code EQUAL 0))
+    MESSAGE(FATAL_ERROR "It was not possible update '${submodule_dir}' submodule.")
+  ENDIF()
+ENDMACRO()
+
+update_submodule(${PROJECT_SOURCE_DIR}/dependencies/)
 include_directories(dependencies/base-n/include)
 
 SET(TASH_INCLUDE_DIRS
