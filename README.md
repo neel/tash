@@ -1,12 +1,13 @@
 # Tash (ট্যাশ) 
 Tash (ট্যাশ) is a small Open Source (FreeBSD License) C++ library for ArangoDB Database which includes APIs for HTTP based document access and a query builder for AQL (Arango Query Language). 
 
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![pipeline status master](https://gitlab.com/neel.basu/tash/badges/master/pipeline.svg)](https://gitlab.com/neel.basu/tash/commits/master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b5fb5f2fd8f8476eb7bcfd1ec4fe6e93)](https://www.codacy.com/manual/neel.basu.z/tash?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=neel/tash&amp;utm_campaign=Badge_Grade)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/neel/tash.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/neel/tash/alerts/)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/neel/tash.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/neel/tash/context:cpp)
 
-![tashgoru](tash-goru.png "ট্যাঁশগরু সুকুমার রায়")
+![tashgoru](tash-goru.png "ট্যাঁশগরু সুকুমার রায়")
 
 * [Building](#building)
 * [Basic Example](#basic-example)
