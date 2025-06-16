@@ -85,7 +85,7 @@ tash::http_response_type tash::connection::query(std::string path, const std::st
         request = db_url(method, path);
     }
     request.set(boost::beast::http::field::content_type, type);
-    request.set(boost::beast::http::field::content_length, content.size());
+    request.set(boost::beast::http::field::content_length, std::to_string(content.size()));
     request.body() = content;
     return query(request);
 }
